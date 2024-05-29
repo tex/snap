@@ -12,4 +12,8 @@
           (request.canceled) (do (cancel) (coroutine.yield nil))
           (not= err "") (coroutine.yield nil)
           (= data "") (snap.continue)
-          (coroutine.yield (string.split data)))))))
+          (do
+            (var results (string.split data))
+            ; simple sort by length, the shorter the better
+            (set results (vim.tbl_map #(snap.with_meta $1 :score (- 0 (length $1))) results))
+            (coroutine.yield results)))))))

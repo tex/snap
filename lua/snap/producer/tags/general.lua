@@ -25,7 +25,12 @@ local function _3_(request, _1_)
     elseif (data == "") then
       snap.continue()
     else
-      coroutine.yield(string.split(data))
+      local results = string.split(data)
+      local function _5_(_241)
+        return snap.with_meta(_241, "score", (0 - #_241))
+      end
+      results = vim.tbl_map(_5_, results)
+      coroutine.yield(results)
     end
   end
   return nil
