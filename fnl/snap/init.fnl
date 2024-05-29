@@ -211,7 +211,7 @@
       (assertfunction view "snap.run each view in 'views' must be a function")))
   (assertfunction? config.loading "snap.run 'loading' must be a function")
   (assertboolean? config.reverse "snap.run 'reverse' must be a boolean")
-  (assertstring? config.initial_filter "snap.run 'initial_filter' must be a string")
+  (asserttypes? [:string :function] config.initial_filter "snap.run 'initial_filter' must be a string or a function")
   (assertfunction? config.autoselect "snap.run 'autoselect' must be a function")
   (asserttable? config.mappings "snap.run 'mappings' must be a table")
 
@@ -238,7 +238,10 @@
   (local loading (or config.loading (get :loading)))
 
   ;; Store the initial filter
-  (local initial-filter (or config.initial_filter ""))
+  (local initial-filter (if
+                          (= (type config.initial_filter) :string)
+                          config.initial_filter
+                          ""))
 
   ;; Stores the original window to so we can pass it back to the select function
   (local original-winnr (vim.api.nvim_get_current_win))
@@ -395,6 +398,7 @@
 
   ;; On input update
   (fn on-update [filter]
+    (print :on-update (vim.inspect filter))
     (set last-requested-filter filter)
     ;; Tracks if any results have rendered
     (var early-write false)
@@ -442,6 +446,19 @@
             (length results)
             (+ results-view.height cursor-row)
             #(and $1.score $2.score (> $1.score $2.score)))
+          ;; Store the last written results
+          (set last-results results)
+          ;; Schedule the write
+          (write-results last-results))
+        (has_meta (tbl.first results) :result)
+        ;; Sort the table as far as we need to display results
+        (do
+          (tbl.partial-quicksort
+            results
+            1
+            (length results)
+            (+ results-view.height cursor-row)
+            #(and $1.result $2.result (< $1.result $2.result)))
           ;; Store the last written results
           (set last-results results)
           ;; Schedule the write
@@ -557,8 +574,18 @@
       (local next-config {})
       (each [key value (pairs config)]
         (tset next-config key value))
+      (print :on-next 1 (vim.inspect last-requested-filter))
       (local next (or config.next (table.remove config.steps)))
       ;; handle next step
+
+      ;; Use last filter as initial filter.
+      ;; If user don't like this behavior, initial filter
+      ;; can be set to empty string in steps configuration.
+      (if
+        (= (type next.config.initial_filter) :function)
+        (tset next-config :initial_filter (next.config.initial_filter last-requested-filter))
+        (tset next-config :initial_filter last-requested-filter))
+
       (safecall (fn []
         (match (type next)
           :function (tset next-config :producer (next (fn [] results)))
@@ -572,6 +599,7 @@
                 next.format
                 (next.consumer (next.format results))
                 (next.consumer (fn [] results))))))
+         (print 2 (vim.inspect next-config))
          (run next-config)))))
 
   (fn on-view-toggle-hide []

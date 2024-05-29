@@ -1,6 +1,6 @@
 (let [snap (require :snap)
       fzy (require :fzy)]
-  (fn [producer]
+  (fn [producer filter-mod]
     "All"
     (fn filter [filter results]
       (if
@@ -14,5 +14,5 @@
     (fn [request]
       (each [results (snap.consume producer request)]
         (match (type results)
-          "table" (coroutine.yield (filter request.filter results))
+          "table" (coroutine.yield (filter (if filter-mod (filter-mod request.filter) request.filter) results))
           "nil" (coroutine.yield nil))))))

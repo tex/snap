@@ -1,7 +1,7 @@
 local _2afile_2a = "fnl/snap/consumer/fzy/all.fnl"
 local snap = require("snap")
 local fzy = require("fzy")
-local function _1_(producer)
+local function _1_(producer, filter_mod)
   local function filter(filter0, results)
     if (filter0 == "") then
       return results
@@ -24,7 +24,13 @@ local function _1_(producer)
     for results in snap.consume(producer, request) do
       local _7_ = type(results)
       if (_7_ == "table") then
-        coroutine.yield(filter(request.filter, results))
+        local _8_
+        if filter_mod then
+          _8_ = filter_mod(request.filter)
+        else
+          _8_ = request.filter
+        end
+        coroutine.yield(filter(_8_, results))
       elseif (_7_ == "nil") then
         coroutine.yield(nil)
       else
