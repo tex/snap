@@ -4,12 +4,14 @@
   (local vimgrep {})
   (local args [:--line-buffered :-M 100 :--vimgrep :-S])
   (local line-args [:--line-buffered :-M 100 :--no-heading :--column])
+  (fn if-request-filter [cmd request {: args : cwd}]
+    (if (not= request.filter "") (cmd request {: args : cwd }) (coroutine.yield nil)))
   (fn vimgrep.default [request]
     (let [cwd (snap.sync vim.fn.getcwd)]
-      (general request {:args (tbl.concat args [request.filter]) : cwd})))
+      (if-request-filter general request {:args (tbl.concat args [request.filter]) : cwd})))
   (fn vimgrep.hidden [request]
     (let [cwd (snap.sync vim.fn.getcwd)]
-      (general request {:args (tbl.concat args [:--hidden request.filter]) : cwd})))
+      (if-request-filter general request {:args (tbl.concat args [:--hidden request.filter]) : cwd})))
   (fn vimgrep.line [new-args cwd]
     (let [args (tbl.concat line-args new-args)
           absolute (not= cwd nil)]

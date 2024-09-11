@@ -7,7 +7,7 @@ local function get_encoding(path)
   handle:close()
   return encoding
 end
-local max_size = (1024 * 500)
+local max_size = (1024 * 1500)
 local function _1_(path, on_resume)
   local preview = nil
   if not snap_io.exists(path) then

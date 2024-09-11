@@ -7,7 +7,7 @@
     encoding)
 
   ;; Make file size for preview
-  (local max-size (* 1024 500))
+  (local max-size (* 1024 1500))
 
   (fn [path on-resume]
     (var preview nil)
