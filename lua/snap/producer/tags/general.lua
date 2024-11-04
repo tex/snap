@@ -11,7 +11,7 @@ local function _3_(request, _1_)
   else
     local cwd = snap.sync(vim.fn.getcwd)
     local cmd
-    if io.exists((cwd .. "/" .. ".ttags.0.db")) then
+    if io.exists((cwd .. "/" .. ".ttags.entry.bin")) then
       cmd = "ttags"
     elseif io.exists((cwd .. "/" .. "GTAGS")) then
       table.insert(largs, "--result=grep")

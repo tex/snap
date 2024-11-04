@@ -9,7 +9,7 @@
       (= request.filter "")
       (coroutine.yield nil)
       (let [cwd (snap.sync vim.fn.getcwd)
-            cmd (if (io.exists (.. cwd "/" ".ttags.0.db"))
+            cmd (if (io.exists (.. cwd "/" ".ttags.entry.bin"))
                     :ttags
                     (io.exists (.. cwd "/" "GTAGS"))
                     (do
