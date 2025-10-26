@@ -41,9 +41,9 @@
           ;; Set the preview
           (vim.api.nvim_buf_set_lines request.bufnr 0 -1 false preview)
           ;; Try to set cursor to appropriate line
-          (when (and (not= file-data.line nil) (<= file-data.line preview-size))
+          (when (and (not= file-data.lnum nil) (<= file-data.lnum preview-size))
             ;; TODO Col highlighting isn't working
-            (vim.api.nvim_win_set_cursor request.winnr [file-data.line file-data.column]))
+            (vim.api.nvim_win_set_cursor request.winnr [file-data.lnum file-data.col]))
           ;; Add syntax highlighting
           (when
             (< (tbl.max-length preview) max-length)

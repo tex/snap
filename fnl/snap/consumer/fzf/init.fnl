@@ -16,7 +16,7 @@
         (= request.filter "")
         (coroutine.yield results)
         (do
-          (local cwd (snap.sync vim.fn.getcwd))
+          (local cwd (or (snap.getcwd) "."))
           (local stdout (vim.loop.new_pipe false))
           (local fzf (io.spawn :fzf [:-f request.filter] cwd stdout))
 

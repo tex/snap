@@ -4,7 +4,7 @@
 
 (file
   (fn [selection]
-    (local {: filename :lnum line :col column} (parse (tostring selection)))
-    {:path (snap.sync (partial vim.fn.fnamemodify filename ":p"))
-     : line
-     : column}))
+    (local {: filename : lnum : col} (parse (tostring selection)))
+    {:path (snap.topath filename)
+     : lnum
+     : col}))

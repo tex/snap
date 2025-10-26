@@ -10,10 +10,11 @@ do
   _2amodule_2a["aniseed/locals"] = {}
   _2amodule_locals_2a = (_2amodule_2a)["aniseed/locals"]
 end
-local buffer, register, size, tbl, window = require("snap.common.buffer"), require("snap.common.register"), require("snap.view.size"), require("snap.common.tbl"), require("snap.common.window")
+local buffer, register, size, snap, tbl, window = require("snap.common.buffer"), require("snap.common.register"), require("snap.view.size"), require("snap"), require("snap.common.tbl"), require("snap.common.window")
 do end (_2amodule_locals_2a)["buffer"] = buffer
 _2amodule_locals_2a["register"] = register
 _2amodule_locals_2a["size"] = size
+_2amodule_locals_2a["snap"] = snap
 _2amodule_locals_2a["tbl"] = tbl
 _2amodule_locals_2a["window"] = window
 local function layout(config)
@@ -36,7 +37,7 @@ local function layout(config)
   end
   return {width = _2_, height = 1, row = _4_, col = col, focusable = true, title = "Find", enter = true}
 end
-local mappings = {next = {"<C-q>"}, enter = {"<CR>"}, ["enter-split"] = {"<C-x>"}, ["enter-vsplit"] = {"<C-v>"}, ["enter-tab"] = {"<C-t>"}, exit = {"<Esc>", "<C-c>"}, select = {"<Tab>"}, unselect = {"<S-Tab>"}, ["select-all"] = {"<C-a>"}, ["prev-item"] = {"<C-p>", "<Up>", "<C-k>"}, ["next-item"] = {"<C-n>", "<Down>", "<C-j>"}, ["prev-page"] = {"<C-b>", "<PageUp>"}, ["next-page"] = {"<C-f>", "<PageDown>"}, ["view-page-down"] = {"<C-d>"}, ["view-page-up"] = {"<C-u>"}, ["view-toggle-hide"] = {"<C-h>"}}
+local mappings = {next = {"<C-q>"}, enter = {"<CR>"}, ["enter-split"] = {"<C-x>"}, ["enter-vsplit"] = {"<C-v>"}, ["enter-tab"] = {"<C-t>"}, exit = {"<Esc>", "<C-c>"}, select = {"<Tab>"}, unselect = {"<S-Tab>"}, ["select-all"] = {"<C-a>"}, ["prev-item"] = {"<C-p>", "<Up>", "<C-k>"}, ["next-item"] = {"<C-n>", "<Down>", "<C-j>"}, ["prev-page"] = {"<C-b>", "<PageUp>"}, ["next-page"] = {"<C-f>", "<PageDown>"}, ["view-page-down"] = {"<C-d>", "<C-Down>"}, ["view-page-up"] = {"<C-u>", "<C-Up>"}, ["view-toggle-hide"] = {"<C-h>"}, ["change-cwd"] = {"<C-o>"}, ["change-params"] = {"<C-p>"}}
 local group = vim.api.nvim_create_augroup("SnapInput", {clear = true})
 local function create(config)
   local bufnr = buffer.create()
@@ -66,6 +67,7 @@ local function create(config)
   local function on_exit()
     if not exited then
       exited = true
+      snap.setparams(nil)
       return config["on-exit"]()
     else
       return nil
@@ -89,6 +91,14 @@ local function create(config)
   end
   local function on_ctrla()
     return config["on-select-all-toggle"]()
+  end
+  local function on_change_cwd()
+    snap.setcwd(vim.fn.input({prompt = "Dir> ", default = (snap.getcwd() or ""), completion = "dir", cancelreturn = (snap.getcwd() or "")}))
+    return config["on-update"](get_filter())
+  end
+  local function on_change_params()
+    snap.setparams(vim.fn.input("Params> ", (snap.getparams() or "")))
+    return config["on-update"](get_filter())
   end
   local function on_lines()
     config["on-update"](get_filter())
@@ -122,6 +132,8 @@ local function create(config)
   register["buf-map"](bufnr, {"n", "i"}, mappings0["view-page-down"], config["on-viewpagedown"])
   register["buf-map"](bufnr, {"n", "i"}, mappings0["view-page-up"], config["on-viewpageup"])
   register["buf-map"](bufnr, {"n", "i"}, mappings0["view-toggle-hide"], config["on-view-toggle-hide"])
+  register["buf-map"](bufnr, {"n", "i"}, mappings0["change-cwd"], on_change_cwd)
+  register["buf-map"](bufnr, {"n", "i"}, mappings0["change-params"], on_change_params)
   vim.api.nvim_create_autocmd({"WinLeave", "BufLeave", "BufDelete"}, {group = group, buffer = bufnr, once = true, callback = on_exit})
   vim.api.nvim_buf_attach(bufnr, false, {on_lines = on_lines, on_detach = on_detach})
   local function delete()

@@ -1,10 +1,16 @@
+(local snap (require :snap))
 (local file (require :snap.select.common.file))
 
-(local select (file (fn [selection] {:filename (tostring selection)})))
+(local tostruct
+  (fn [selection] {:filename (snap.topath selection)}))
+
+(local select
+  (file (fn [selection] (tostruct selection))))
 
 (fn multiselect [selections winnr]
-  (each [index selection (ipairs selections)]
-    (select selection (if (= (length selections) index) winnr false))))
+  (vim.fn.setqflist (vim.tbl_map tostruct selections))
+  (vim.api.nvim_command :copen)
+  (vim.api.nvim_command :cfirst))
 
-{: multiselect
- : select}
+{: select
+ : multiselect}

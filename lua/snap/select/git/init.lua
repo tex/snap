@@ -3,6 +3,8 @@ local snap = require("snap")
 local layout = require("snap.layout")
 local tbl = require("snap.common.tbl")
 local snap_string = require("snap.common.string")
+local io = require("snap.common.io")
+local buffer = require("snap.select.common.buffer")
 local filter
 if pcall(require, "fzy") then
   filter = require("snap.consumer.fzy")
@@ -91,21 +93,36 @@ local function pull_list(branch)
   end
   return vim.system({"git", "remote"}, {cwd = vim.fn.getcwd()}, _13_)
 end
+local function select(selection, winnr, type)
+  local function _19_(_241)
+    if (_241.code == 0) then
+      local lines = snap_string.split(_241.stdout)
+      local buffer_name = tostring(selection.hash)
+      local function _20_()
+        return buffer(winnr, type, lines, "git", buffer_name)
+      end
+      return vim.schedule(_20_)
+    else
+      return nil
+    end
+  end
+  return vim.system({"git", "diff-tree", "-p", selection.hash}, {cwd = vim.fn.getcwd()}, _19_)
+end
 local branch_actions
-local function _19_(_241)
+local function _22_(_241)
   return snap.with_metas(_241.label, _241)
 end
-branch_actions = vim.tbl_map(_19_, {{label = "Checkout", action = checkout}, {label = "Reset (soft)", action = reset_soft}, {label = "Reset (hard)", action = reset_hard}, {label = "Pull", action = pull_list}})
-local function branch(selection)
-  local function _20_()
+branch_actions = vim.tbl_map(_22_, {{label = "Select", action = select}, {label = "Checkout", action = checkout}, {label = "Reset (soft)", action = reset_soft}, {label = "Reset (hard)", action = reset_hard}, {label = "Pull", action = pull_list}})
+local function branch(selection, winnr, type)
+  local function _23_()
     return branch_actions
   end
-  local function _21_(_241)
-    return _241.action(selection)
+  local function _24_(_241)
+    return _241.action(selection, winnr, type)
   end
-  local function _22_(...)
+  local function _25_(...)
     return action_layout(branch_actions, ...)
   end
-  return snap.run({prompt = "Select>", producer = filter(_20_), select = _21_, layout = _22_})
+  return snap.run({prompt = "Select>", producer = filter(_23_), select = _24_, layout = _25_})
 end
-return {branch = branch}
+return branch

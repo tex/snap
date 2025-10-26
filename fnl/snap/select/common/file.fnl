@@ -1,7 +1,7 @@
 (fn [get-data]
   (fn [selection winnr type]
     (var winnr winnr)
-    (let [{: filename : line : column} (get-data selection)]
+    (let [{: filename : lnum : col} (get-data selection)]
       (local path (vim.fn.fnamemodify filename ":p"))
       (let [buffer (vim.fn.bufnr path true)]
         (vim.api.nvim_buf_set_option buffer :buflisted true)
@@ -20,5 +20,5 @@
             (vim.api.nvim_command "tabnew")
             (vim.api.nvim_win_set_buf 0 buffer)
             (set winnr (vim.api.nvim_get_current_win))))
-        (when (not= line nil)
-          (vim.api.nvim_win_set_cursor winnr [line (if (= column nil) 0 column)]))))))
+        (when (not= lnum nil)
+          (vim.api.nvim_win_set_cursor winnr [lnum (if (= col nil) 0 col)]))))))

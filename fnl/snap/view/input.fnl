@@ -1,4 +1,5 @@
-(module snap.view.input {require {size snap.view.size
+(module snap.view.input {require {snap snap
+                                  size snap.view.size
                                   tbl snap.common.tbl
                                   buffer snap.common.buffer
                                   window snap.common.window
@@ -29,9 +30,11 @@
   :next-item [:<C-n> :<Down> :<C-j>]
   :prev-page [:<C-b> :<PageUp>]
   :next-page [:<C-f> :<PageDown>]
-  :view-page-down [:<C-d>]
-  :view-page-up [:<C-u>]
+  :view-page-down [:<C-d> :<C-Down>]
+  :view-page-up [:<C-u> :<C-Up>]
   :view-toggle-hide [:<C-h>]
+  :change-cwd [:<C-o>]
+  :change-params [:<C-p>]
 })
 
 (local group (vim.api.nvim_create_augroup :SnapInput {:clear true}))
@@ -60,6 +63,7 @@
     (fn on-exit []
       (when (not exited)
         (set exited true)
+        (snap.setparams nil)
         (config.on-exit)))
 
     (fn on-enter [type]
@@ -80,6 +84,21 @@
 
     (fn on-ctrla []
       (config.on-select-all-toggle))
+
+    (fn on-change-cwd []
+      (snap.setcwd
+        (vim.fn.input {
+                      :prompt "Dir> "
+                      :default (or (snap.getcwd) "")
+                      :completion :dir
+                      :cancelreturn (or (snap.getcwd) "")
+                      }))
+      (config.on-update (get-filter)))
+
+    (fn on-change-params []
+      (snap.setparams
+        (vim.fn.input "Params> " (or (snap.getparams) "")))
+      (config.on-update (get-filter)))
 
     (fn on_lines []
       (config.on-update (get-filter))
@@ -113,6 +132,10 @@
     (register.buf-map bufnr [:n :i] mappings.view-page-down config.on-viewpagedown)
     (register.buf-map bufnr [:n :i] mappings.view-page-up config.on-viewpageup)
     (register.buf-map bufnr [:n :i] mappings.view-toggle-hide config.on-view-toggle-hide)
+
+    ;; Specials
+    (register.buf-map bufnr [:n :i] mappings.change-cwd on-change-cwd)
+    (register.buf-map bufnr [:n :i] mappings.change-params on-change-params)
 
     (vim.api.nvim_create_autocmd
       [:WinLeave :BufLeave :BufDelete]

@@ -21,7 +21,7 @@ local function _1_(producer)
     if (request.filter == "") then
       return coroutine.yield(results)
     else
-      local cwd = snap.sync(vim.fn.getcwd)
+      local cwd = (snap.getcwd() or ".")
       local stdout = vim.loop.new_pipe(false)
       local fzf = io.spawn("fzf", {"-f", request.filter}, cwd, stdout)
       stdout:write(results_string)

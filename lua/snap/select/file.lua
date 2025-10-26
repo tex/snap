@@ -1,21 +1,19 @@
 local _2afile_2a = "fnl/snap/select/file.fnl"
+local snap = require("snap")
 local file = require("snap.select.common.file")
-local select
+local tostruct
 local function _1_(selection)
-  return {filename = tostring(selection)}
+  return {filename = snap.topath(selection)}
 end
-select = file(_1_)
+tostruct = _1_
+local select
+local function _2_(selection)
+  return tostruct(selection)
+end
+select = file(_2_)
 local function multiselect(selections, winnr)
-  for index, selection in ipairs(selections) do
-    local function _2_()
-      if (#selections == index) then
-        return winnr
-      else
-        return false
-      end
-    end
-    select(selection, _2_())
-  end
-  return nil
+  vim.fn.setqflist(vim.tbl_map(tostruct, selections))
+  vim.api.nvim_command("copen")
+  return vim.api.nvim_command("cfirst")
 end
-return {multiselect = multiselect, select = select}
+return {select = select, multiselect = multiselect}

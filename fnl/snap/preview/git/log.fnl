@@ -4,7 +4,6 @@
 
 (fn [request]
   (local cwd (snap.sync vim.fn.getcwd))
-
   (local (contents error) (snap.async (partial io.system :git [:diff-tree :-p request.selection.hash] cwd)))
 
   (snap.sync (fn []

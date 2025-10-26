@@ -26,6 +26,7 @@
                        window            snap.common.window
                        input             snap.view.input
                        results           snap.view.results
+                       io                snap.common.io
                        view              snap.view.view
                        request           snap.producer.request
                        create-producer   snap.producer.create}
@@ -80,6 +81,25 @@
   "Basic wrapper around coroutine.yield that returns first result"
   (assertfunction value "value passed to snap.sync must be a function")
   (select 2 (coroutine.yield value)))
+
+(defn getcwd []
+  vim.g.snap_cwd)
+
+(defn setcwd [cwd]
+  (let [cwd (if (= cwd "") nil cwd)]
+    (set vim.g.snap_cwd cwd)))
+
+(defn topath [selection]
+    (let [path (tostring selection)]
+      (if (= (io.absolute-path? path) true)
+          path
+          (.. (or (getcwd) ".") "/" path))))
+
+(defn getparams []
+  vim.g.snap_params)
+
+(defn setparams [params]
+  (set vim.g.snap_params params))
 
 ;; Represents a request to yield for other processing
 (def continue_value {:continue true})
@@ -411,7 +431,7 @@
     (var results [])
     ;; Create the cancel function
     (fn cancel [request] (or exit (not= request.filter last-requested-filter)))
-    ;; Create the request body
+    ;; Create the request body (TODO: MS: This looks interesting!)
     (local body {: filter :height results-view.height :winnr original-winnr})
     ;; Prepare the request
     (local request (request.create {: body : cancel}))
@@ -469,6 +489,7 @@
     ;; Collects results progressively and renders early if possible
     (fn config.on-value [value]
       ;; Check the type
+      ;; (print (vim.inspect value))
       (asserttable value "Main producer yielded a non-yieldable value")
       ;; Accumulate the results
       (when (> (length value) 0)

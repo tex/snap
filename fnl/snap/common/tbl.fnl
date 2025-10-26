@@ -21,13 +21,12 @@
       (tset result key val))
     result))
 
-(defn concat [tbl-a tbl-b]
+(defn concat [...]
   "Concatenates tables"
   (let [tbl []]
-    (each [_ value (ipairs tbl-a)]
-      (table.insert tbl value))
-    (each [_ value (ipairs tbl-b)]
-      (table.insert tbl value))
+    (each [_ tbli (ipairs [...])]
+      (each [_ value (ipairs tbli)]
+        (table.insert tbl value)))
     tbl))
 
 (defn take [tbl num]

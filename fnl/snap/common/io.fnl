@@ -58,6 +58,9 @@
   (vim.loop.fs_close fd)
   stat.size)
 
+(defn absolute-path? [path]
+  (= (string.sub path 1 1) "/"))
+
 (local chunk-size 10000)
 
 (defn read [path]

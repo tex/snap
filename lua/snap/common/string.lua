@@ -10,10 +10,10 @@ do
   _2amodule_2a["aniseed/locals"] = {}
   _2amodule_locals_2a = (_2amodule_2a)["aniseed/locals"]
 end
-local function split(str)
+local function split(str, sep)
   local tbl_17_auto = {}
   local i_18_auto = #tbl_17_auto
-  for _, line in ipairs(vim.split(str, "\n", true)) do
+  for _, line in ipairs(vim.split(str, (sep or "\n"), true)) do
     local val_19_auto
     do
       local trimmed = vim.trim(line)

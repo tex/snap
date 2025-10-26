@@ -3,6 +3,6 @@
 
 (file
   (fn [selection]
-    {:path (snap.sync (partial vim.fn.fnamemodify (tostring selection) ":p"))
-     :line nil
-     :column nil}))
+    {:path (snap.topath selection)
+     :lnum nil
+     :col nil}))

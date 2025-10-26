@@ -95,6 +95,10 @@ local function size(path)
   return stat.size
 end
 _2amodule_2a["size"] = size
+local function absolute_path_3f(path)
+  return (string.sub(path, 1, 1) == "/")
+end
+_2amodule_2a["absolute-path?"] = absolute_path_3f
 local chunk_size = 10000
 local function read(path)
   local closed = false

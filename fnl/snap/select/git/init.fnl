@@ -2,7 +2,8 @@
 (local layout (require :snap.layout))
 (local tbl (require :snap.common.tbl))
 (local snap-string (require :snap.common.string))
-
+(local io (require :snap.common.io))
+(local buffer (require :snap.select.common.buffer))
 (local filter (if (pcall require :fzy)
                 (require :snap.consumer.fzy)
                 (require :snap.consumer.fzf)))
@@ -74,16 +75,26 @@
                   :select (partial (vim.schedule_wrap pull) branch)
                   :layout (partial action-layout remotes)})))))
 
+(fn select [selection winnr type]
+  (vim.system
+    [:git :diff-tree :-p selection.hash]
+    {:cwd (vim.fn.getcwd)}
+    #(when
+       (= $1.code 0)
+       (local lines (snap-string.split $1.stdout))
+       (local buffer-name (tostring selection.hash))
+       (vim.schedule
+         #(buffer winnr type lines "git" buffer-name)))))
+
 (local branch-actions (vim.tbl_map #(snap.with_metas $1.label $1) [
+  {:label "Select" :action select}
   {:label "Checkout" :action checkout}
   {:label "Reset (soft)" :action reset-soft}
   {:label "Reset (hard)" :action reset-hard}
   {:label "Pull" :action pull-list}]))
 
-(fn branch [selection]
+(fn branch [selection winnr type]
   (snap.run {:prompt :Select>
              :producer (filter (fn [] branch-actions))
-             :select #($1.action selection)
+             :select #($1.action selection winnr type)
              :layout (partial action-layout branch-actions)}))
-
-{: branch}

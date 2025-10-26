@@ -3,7 +3,16 @@ local snap = require("snap")
 local tbl = snap.get("common.tbl")
 local function _1_(producer)
   local cache = {}
+  local cache_cwd = nil
   local function _2_(request)
+    do
+      local cwd = snap.sync(snap.getcwd)
+      if not (cache_cwd == cwd) then
+        cache_cwd = cwd
+        cache = {}
+      else
+      end
+    end
     if (#cache == 0) then
       for results in snap.consume(producer, request) do
         if (#results > 0) then

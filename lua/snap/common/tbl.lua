@@ -48,13 +48,12 @@ local function merge(tbl1, tbl2)
   return result
 end
 _2amodule_2a["merge"] = merge
-local function concat(tbl_a, tbl_b)
+local function concat(...)
   local tbl = {}
-  for _, value in ipairs(tbl_a) do
-    table.insert(tbl, value)
-  end
-  for _, value in ipairs(tbl_b) do
-    table.insert(tbl, value)
+  for _, tbli in ipairs({...}) do
+    for _0, value in ipairs(tbli) do
+      table.insert(tbl, value)
+    end
   end
   return tbl
 end

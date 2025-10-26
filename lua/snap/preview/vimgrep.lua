@@ -5,11 +5,8 @@ local parse = require("snap.common.vimgrep.parse")
 local function _1_(selection)
   local _local_2_ = parse(tostring(selection))
   local filename = _local_2_["filename"]
-  local line = _local_2_["lnum"]
-  local column = _local_2_["col"]
-  local function _3_(...)
-    return vim.fn.fnamemodify(filename, ":p", ...)
-  end
-  return {path = snap.sync(_3_), line = line, column = column}
+  local lnum = _local_2_["lnum"]
+  local col = _local_2_["col"]
+  return {path = snap.topath(filename), lnum = lnum, col = col}
 end
 return file(_1_)
