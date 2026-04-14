@@ -19,15 +19,17 @@ local function action_layout(actions)
   local height = (#actions + 3)
   return {width = width, height = height, col = layout.middle(columns, width), row = layout.middle(lines, height)}
 end
-local function checkout(selection, on_done)
+local function checkout(selection, winnr, type, on_done)
+  vim.notify(string.format("Checking out '%s'", tostring(selection)))
   local function _2_(_241)
     local _3_ = _241.code
     if (_3_ == 0) then
+      vim.notify(string.format("Checked out '%s'", tostring(selection)), vim.log.levels.INFO)
       if on_done then
-        vim.schedule(on_done)
+        return vim.schedule(on_done)
       else
+        return nil
       end
-      return vim.notify(string.format("Checked out '%s'", tostring(selection)), vim.log.levels.INFO)
     elseif true then
       local _ = _3_
       return vim.notify(string.format("Error when checking out '%s':\n%s", tostring(selection), _241.stderr), vim.log.levels.ERROR)
@@ -35,7 +37,7 @@ local function checkout(selection, on_done)
       return nil
     end
   end
-  return vim.system({"git", "checkout", tostring(selection)}, {cwd = vim.fn.getcwd()}, _2_)
+  return vim.system({"git", "checkout", (selection.hash or tostring(selection))}, {cwd = vim.fn.getcwd()}, _2_)
 end
 local function reset_soft(selection)
   local function _6_(_241)
@@ -68,7 +70,7 @@ local function pull(branch, remote)
     end
     return vim.system({"git", "pull", tostring(remote), tostring(branch)}, {cwd = vim.fn.getcwd()}, _11_)
   end
-  return checkout(branch, _10_)
+  return checkout(branch, 0, 0, _10_)
 end
 local function pull_list(branch)
   local function _13_(_241)

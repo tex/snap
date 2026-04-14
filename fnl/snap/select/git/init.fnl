@@ -19,16 +19,17 @@
      :col (layout.middle columns width)
      :row (layout.middle lines height)}))
 
-(fn checkout [selection on-done]
+(fn checkout [selection winnr type on-done]
+  (vim.notify (string.format "Checking out '%s'" (tostring selection)))
   (vim.system
-    [:git :checkout (tostring selection)]
+    [:git :checkout (or selection.hash (tostring selection))]
     {:cwd (vim.fn.getcwd)}
     #(case $1.code
        0 (do
-           (when on-done (vim.schedule on-done))
            (vim.notify
              (string.format "Checked out '%s'" (tostring selection))
-             vim.log.levels.INFO))
+             vim.log.levels.INFO)
+           (when on-done (vim.schedule on-done)))
        _ (vim.notify
            (string.format "Error when checking out '%s':\n%s" (tostring selection) $1.stderr)
            vim.log.levels.ERROR))))
@@ -54,7 +55,7 @@
          vim.log.levels.INFO))))
 
 (fn pull [branch remote]
-  (checkout branch #(vim.system
+  (checkout branch 0 0 #(vim.system
     [:git :pull (tostring remote) (tostring branch)]
     {:cwd (vim.fn.getcwd)}
     #(when
