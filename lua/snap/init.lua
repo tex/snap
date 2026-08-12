@@ -793,16 +793,20 @@ local function run(config1)
   if (initial_filter ~= "") then
     vim.api.nvim_feedkeys(initial_filter, "n", false)
   else
+    local function _111_()
+      return on_update("")
+    end
+    vim.schedule(_111_)
   end
   return nil
 end
 _2amodule_2a["run"] = run
 local function create(config1, defaults)
   assert((type(config1) == "function"), "Config must be a function")
-  local function _112_()
+  local function _113_()
     return run(tbl.merge((defaults or {}), config1()))
   end
-  return _112_
+  return _113_
 end
 _2amodule_2a["create"] = create
 return _2amodule_2a
