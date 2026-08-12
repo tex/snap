@@ -7,12 +7,12 @@
 
 (fn layout [config]
   "Creates the results layout"
-  (let [{: width : height : row : col} (config.layout)]
-    {:width (if (config.has-views) (- (math.floor (* width size.view-width)) size.padding size.padding) width)
-     :height (- height size.border size.border size.padding)
-     :title :Results
-     :row (if config.reverse (+ row size.border size.padding size.padding) row)
+  (let [{: width : height : row : col} (. (config.layout config.has-views config.reverse) "results")]
+    {: width
+     : height
+     : row
      : col
+     :title :Results
      :focusable false}))
 
 (defn create [config]

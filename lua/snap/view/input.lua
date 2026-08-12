@@ -18,24 +18,12 @@ _2amodule_locals_2a["snap"] = snap
 _2amodule_locals_2a["tbl"] = tbl
 _2amodule_locals_2a["window"] = window
 local function layout(config)
-  local _let_1_ = config.layout()
+  local _let_1_ = (config.layout(config["has-views"], config.reverse)).input
   local width = _let_1_["width"]
   local height = _let_1_["height"]
   local row = _let_1_["row"]
   local col = _let_1_["col"]
-  local _2_
-  if config["has-views"]() then
-    _2_ = (math.floor((width * size["view-width"])) - size.padding - size.padding)
-  else
-    _2_ = width
-  end
-  local _4_
-  if config.reverse then
-    _4_ = row
-  else
-    _4_ = ((row + height) - size.padding)
-  end
-  return {width = _2_, height = 1, row = _4_, col = col, focusable = true, title = "Find", enter = true}
+  return {width = width, height = 1, row = row, col = col, focusable = true, title = "Find", enter = true}
 end
 local mappings = {next = {"<C-q>"}, enter = {"<CR>"}, ["enter-split"] = {"<C-x>"}, ["enter-vsplit"] = {"<C-v>"}, ["enter-tab"] = {"<C-t>"}, exit = {"<Esc>", "<C-c>"}, select = {"<Tab>"}, unselect = {"<S-Tab>"}, ["select-all"] = {"<C-a>"}, ["prev-item"] = {"<C-p>", "<Up>", "<C-k>"}, ["next-item"] = {"<C-n>", "<Down>", "<C-j>"}, ["prev-page"] = {"<C-b>", "<PageUp>"}, ["next-page"] = {"<C-f>", "<PageDown>"}, ["view-page-down"] = {"<C-d>", "<C-Down>"}, ["view-page-up"] = {"<C-u>", "<C-Up>"}, ["view-toggle-hide"] = {"<C-h>"}, ["change-cwd"] = {"<C-o>"}, ["change-params"] = {"<C-p>"}}
 local group = vim.api.nvim_create_augroup("SnapInput", {clear = true})
@@ -109,18 +97,18 @@ local function create(config)
   end
   register["buf-map"](bufnr, {"n", "i"}, mappings0.next, on_next)
   register["buf-map"](bufnr, {"n", "i"}, mappings0.enter, on_enter)
-  local function _9_(...)
+  local function _5_(...)
     return on_enter("split", ...)
   end
-  register["buf-map"](bufnr, {"n", "i"}, mappings0["enter-split"], _9_)
-  local function _10_(...)
+  register["buf-map"](bufnr, {"n", "i"}, mappings0["enter-split"], _5_)
+  local function _6_(...)
     return on_enter("vsplit", ...)
   end
-  register["buf-map"](bufnr, {"n", "i"}, mappings0["enter-vsplit"], _10_)
-  local function _11_(...)
+  register["buf-map"](bufnr, {"n", "i"}, mappings0["enter-vsplit"], _6_)
+  local function _7_(...)
     return on_enter("tab", ...)
   end
-  register["buf-map"](bufnr, {"n", "i"}, mappings0["enter-tab"], _11_)
+  register["buf-map"](bufnr, {"n", "i"}, mappings0["enter-tab"], _7_)
   register["buf-map"](bufnr, {"n", "i"}, mappings0.exit, on_exit)
   register["buf-map"](bufnr, {"n", "i"}, mappings0.select, on_tab)
   register["buf-map"](bufnr, {"n", "i"}, mappings0.unselect, on_shifttab)
@@ -160,10 +148,10 @@ local function create(config)
     end
   end
   local view = {update = update, delete = delete, bufnr = bufnr, winnr = winnr, width = layout_config.width, height = layout_config.height}
-  local function _15_()
+  local function _11_()
     return view:update()
   end
-  vim.api.nvim_create_autocmd("VimResized", {group = group, callback = _15_})
+  vim.api.nvim_create_autocmd("VimResized", {group = group, callback = _11_})
   return view
 end
 _2amodule_2a["create"] = create

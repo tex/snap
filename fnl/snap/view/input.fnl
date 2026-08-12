@@ -7,10 +7,10 @@
 
 (fn layout [config]
   "Creates the input layout"
-  (let [{: width : height : row : col} (config.layout)]
-    {:width (if (config.has-views) (- (math.floor (* width size.view-width)) size.padding size.padding) width)
+  (let [{: width : height : row : col} (. (config.layout config.has-views config.reverse) "input")]
+    {: width
      :height 1
-     :row (if config.reverse row (- (+ row height) size.padding))
+     : row
      : col
      :focusable true
      :title :Find

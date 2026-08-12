@@ -18,20 +18,12 @@ _2amodule_locals_2a["tbl"] = tbl
 _2amodule_locals_2a["window"] = window
 local group = vim.api.nvim_create_augroup("SnapView", {clear = true})
 local function layout(config)
-  local _let_1_ = config.layout()
+  local _let_1_ = (config.layout(config["has-views"], config.reverse)).view
   local width = _let_1_["width"]
   local height = _let_1_["height"]
   local row = _let_1_["row"]
   local col = _let_1_["col"]
-  local index = (config.index - 1)
-  local border = (index * size.border)
-  local padding = (index * size.padding)
-  local total_borders = ((config["total-views"] - 1) * size.border)
-  local total_paddings = ((config["total-views"] - 1) * size.padding)
-  local sizes = tbl.allocate((height - total_borders - total_paddings), config["total-views"])
-  local height0 = sizes[config.index]
-  local col_offset = math.floor((width * size["view-width"]))
-  return {width = (width - col_offset - size.padding - size.padding - size.border), height = height0, row = (row + tbl.sum(tbl.take(sizes, index)) + border + padding), col = (col + col_offset + (size.border * 2) + size.padding), title = "Preview", focusable = false}
+  return {width = width, height = height, row = row, col = col, title = "Preview", focusable = false}
 end
 local function create(config)
   local bufnr = buffer.create()

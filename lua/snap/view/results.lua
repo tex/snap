@@ -17,24 +17,12 @@ _2amodule_locals_2a["size"] = size
 _2amodule_locals_2a["window"] = window
 local group = vim.api.nvim_create_augroup("SnapResults", {clear = true})
 local function layout(config)
-  local _let_1_ = config.layout()
+  local _let_1_ = (config.layout(config["has-views"], config.reverse)).results
   local width = _let_1_["width"]
   local height = _let_1_["height"]
   local row = _let_1_["row"]
   local col = _let_1_["col"]
-  local _2_
-  if config["has-views"]() then
-    _2_ = (math.floor((width * size["view-width"])) - size.padding - size.padding)
-  else
-    _2_ = width
-  end
-  local _4_
-  if config.reverse then
-    _4_ = (row + size.border + size.padding + size.padding)
-  else
-    _4_ = row
-  end
-  return {width = _2_, height = (height - size.border - size.border - size.padding), title = "Results", row = _4_, col = col, focusable = false}
+  return {width = width, height = height, row = row, col = col, title = "Results", focusable = false}
 end
 local function create(config)
   local bufnr = buffer.create()
@@ -70,10 +58,10 @@ local function create(config)
     end
   end
   local view = {update = update, delete = delete, bufnr = bufnr, winnr = winnr, width = layout_config.width, height = layout_config.height}
-  local function _9_()
+  local function _5_()
     return view:update()
   end
-  vim.api.nvim_create_autocmd("VimResized", {group = group, callback = _9_})
+  vim.api.nvim_create_autocmd("VimResized", {group = group, callback = _5_})
   return view
 end
 _2amodule_2a["create"] = create

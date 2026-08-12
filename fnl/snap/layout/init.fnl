@@ -6,11 +6,11 @@
 
 ;; Helper to get lines
 (defn lines []
-  (vim.api.nvim_get_option :lines))
+  (vim.api.nvim_get_option_value :lines {}))
 
 ;; Helper to get columns
 (defn columns []
-  (vim.api.nvim_get_option :columns))
+  (vim.api.nvim_get_option_value :columns {}))
 
 (defn percent [size percent]
   (math.floor (* size percent)))
@@ -22,43 +22,18 @@
 (fn from-bottom [size offset]
   (- (lines) size offset))
 
-;; The middle for the height or width requested (from top or left)
-(defn middle [total size]
-  (math.floor (/ (- total size) 2)))
-
-(defn %centered [%width %height]
-  "Defines a centered layout based on percent"
-  (let [{: width : height} (size %width %height)]
-    {: width
-     : height
-     :row (middle (lines) height)
-     :col (middle (columns) width)}))
-
-(defn %bottom [%width %height]
-  "Defines a bottom layout based on percent"
-  (let [{: width : height} (size %width %height)]
-    {: width
-     : height
-     :row (from-bottom height 8)
-     :col (middle (columns) width)}))
-
-(defn %top [%width %height]
-  "Defines a top layout based on percent"
-  (let [{: width : height} (size %width %height)]
-    {: width : height :row 5 :col (middle (columns) width)}))
-
-;; Primary available layouts: centered, bottom, top
+;; Primary available layout: centered
 
 (defn centered []
-  (%centered 0.9 0.7))
-
-(defn bottom []
-  (let [lines (vim.api.nvim_get_option :lines)
-        height (math.floor (* lines 0.5))
-        width (vim.api.nvim_get_option :columns)
-        col 0
-        row (- lines height 4)]
-    {: width : height : col : row }))
-
-(defn top []
-  (%top 0.9 0.7))
+    {:input { :width (columns)
+              :height 1
+              :row (- (lines) 4)
+              :col 0 }
+     :results { :width (columns)
+                :height 10
+                :row (- (lines) 4 12)
+                :col 0 }
+     :view { :width (columns)
+             :height (- (lines) 4 12 2)
+             :row 0
+             :col 0 }})

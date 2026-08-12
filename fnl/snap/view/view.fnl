@@ -8,19 +8,11 @@
 
 (fn layout [config]
   "Creates a view layout"
-  (let [{: width : height : row : col} (config.layout)
-        index (- config.index 1)
-        border (* index size.border)
-        padding (* index size.padding)
-        total-borders (* (- config.total-views 1) size.border)
-        total-paddings (* (- config.total-views 1) size.padding)
-        sizes (tbl.allocate (- height total-borders total-paddings) config.total-views)
-        height (. sizes config.index)
-        col-offset (math.floor (* width size.view-width))]
-    {:width (- width col-offset size.padding size.padding size.border)
+  (let [{: width : height : row : col} (. (config.layout config.has-views config.reverse) "view")]
+    {: width
      : height
-     :row (+ row (tbl.sum (tbl.take sizes index)) border padding)
-     :col (+ col col-offset (* size.border 2) size.padding)
+     : row
+     : col
      :focusable false
      :title :Preview}))
 
