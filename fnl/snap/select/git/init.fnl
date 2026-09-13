@@ -8,16 +8,24 @@
                 (require :snap.consumer.fzy)
                 (require :snap.consumer.fzf)))
 
-(fn action-layout [actions]
+(fn action-layout [actions has-view reverse]
   (let [columns (layout.columns)
         lines (layout.lines)
         max-length (tbl.max-length actions)
         width (* max-length 3)
         height (+ (length actions) 3)]
-    {: width
-     : height
-     :col (layout.middle columns width)
-     :row (layout.middle lines height)}))
+    {:input {: width
+             :height 1
+             :col (layout.middle columns width)
+             :row (- (layout.middle lines height ) 3)}
+    :results {: width
+              : height
+              :col (layout.middle columns width)
+              :row (layout.middle lines height )}
+    :view {:width 0
+           :height 0
+           :col 0
+           :row 0}}))
 
 (fn checkout [selection winnr type on-done]
   (vim.notify (string.format "Checking out '%s'" (tostring selection)))

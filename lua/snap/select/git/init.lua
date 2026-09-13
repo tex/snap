@@ -11,13 +11,13 @@ if pcall(require, "fzy") then
 else
   filter = require("snap.consumer.fzf")
 end
-local function action_layout(actions)
+local function action_layout(actions, has_view, reverse)
   local columns = layout.columns()
   local lines = layout.lines()
   local max_length = tbl["max-length"](actions)
   local width = (max_length * 3)
   local height = (#actions + 3)
-  return {width = width, height = height, col = layout.middle(columns, width), row = layout.middle(lines, height)}
+  return {input = {width = width, height = 1, col = layout.middle(columns, width), row = (layout.middle(lines, height) - 3)}, results = {width = width, height = height, col = layout.middle(columns, width), row = layout.middle(lines, height)}, view = {width = 0, height = 0, col = 0, row = 0}}
 end
 local function checkout(selection, winnr, type, on_done)
   vim.notify(string.format("Checking out '%s'", tostring(selection)))

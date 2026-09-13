@@ -15,15 +15,11 @@
 (defn percent [size percent]
   (math.floor (* size percent)))
 
-(fn size [%width %height]
-  {:width (math.floor (* (columns) %width))
-   :height (math.floor (* (lines) %height))})
-
-(fn from-bottom [size offset]
-  (- (lines) size offset))
+;; The middle for the height or width requested (from top or left)
+(defn middle [total size]
+  (math.floor (/ (- total size) 2)))
 
 ;; Primary available layout: centered
-
 (defn centered []
     {:input { :width (columns)
               :height 1
