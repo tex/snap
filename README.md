@@ -54,12 +54,11 @@ use { 'camspiers/snap', rocks = {'fzy'}}
 
 #### Semi-Optional Dependencies
 
-To use the following `snap` components you need the specified dependencies, however not all components are needed, for example you should probably choose between `fzy` and `fzf` as your primary consumer.
+To use the following `snap` components you need the specified dependencies, however not all components are needed, for example you should probably choose `fzy` as your primary consumer.
 
 | Component            | Dependency                        |
 | -------------------- | --------------------------------- |
 | `consumer.fzy`       | `fzy` via luarocks                |
-| `consumer.fzf`       | `fzf` available on command line   |
 | `producer.ripgrep.*` | `rg` available on commmand line   |
 | `producer.fd.*`      | `fd` available on commmand line   |
 | `producer.git.file`  | `git` available on commmand line  |
@@ -258,17 +257,6 @@ snap.run {
 }
 ```
 
-or using `fzf`:
-
-```lua
-snap.run {
-  producer = snap.get'consumer.fzf'(snap.get'producer.ripgrep.file'),
-  select = snap.get'select.file'.select,
-  multiselect = snap.get'select.file'.multiselect,
-  views = {snap.get'preview.file'}
-}
-```
-
 ### Live Ripgrep
 
 ```lua
@@ -328,7 +316,7 @@ or find git files with fallback to ripgrep:
 
 ```lua
 snap.run {
-  producer = snap.get'consumer.fzf'(
+  producer = snap.get'consumer.fzy'(
     snap.get'consumer.try'(
       snap.get'producer.git.file',
       snap.get'producer.ripgrep.file'
@@ -375,14 +363,14 @@ snap.run {
 
 ### Grep with FZF as optional next step
 
-The following will run the vimgrep producer and upon `<C-q>` will run `fzf` on the filtered results.
+The following will run the vimgrep producer and upon `<C-q>` will run `fzy` on the filtered results.
 
 ```lua
 snap.run {
   producer = snap.get'producer.ripgrep.vimgrep',
   steps = {{
-    consumer = snap.get'consumer.fzf',
-    config = {prompt = "FZF>"}
+    consumer = snap.get'consumer.fzy',
+    config = {prompt = "FZY>"}
   }},
   select = snap.get'select.file'.select,
   multiselect = snap.get'select.file'.multiselect,
@@ -396,7 +384,7 @@ The following will combine results from multiple paths using a producer for each
 
 ```lua
 snap.run {
-  producer = snap.get'consumer.fzf'(
+  producer = snap.get'consumer.fzy'(
     snap.get'consumer.combine'(
       snap.get'producer.ripgrep.file'.args({}, "/directory1"),
       snap.get'producer.ripgrep.file'.args({}, "/directory2"),
@@ -946,10 +934,6 @@ A component piece of fzy that only attaches score meta data.
 
 A component piece of fzy that only attaches position meta data.
 
-#### `snap.consumer.fzf`
-
-Runs filtering through fzf, only supports basic positions highlighting for now.
-
 #### `snap.consumer.try`
 
 Accepts and arbitrary number of producers and upon the first that yields results then use it and skip the rest:
@@ -1036,7 +1020,6 @@ make compile
 - [x] Preview system
 - [x] More configurable layout system, including arbitrary windows
 - [x] Configurable loading screen
-- [x] FZF score/filter consumer
 - [ ] More producers for vim concepts
 - [ ] Lua filter consumer
 - [ ] Tests

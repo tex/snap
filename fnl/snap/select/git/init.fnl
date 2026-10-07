@@ -4,9 +4,7 @@
 (local snap-string (require :snap.common.string))
 (local io (require :snap.common.io))
 (local buffer (require :snap.select.common.buffer))
-(local filter (if (pcall require :fzy)
-                (require :snap.consumer.fzy)
-                (require :snap.consumer.fzf)))
+(local filter (require :snap.consumer.fzy))
 
 (fn action-layout [actions has-view reverse]
   (let [columns (layout.columns)

@@ -28,15 +28,7 @@
   (string.format "%s%s" prompt (or suffix :>)))
 
 (fn with [fnc defaults]
-  "Returns a new default with config pre-applied.
-
-  If for example you prefer fzy over fzf, then:
-
-  -- This creates a version of snap.defaults.file with fzy set as the default consumer:
-  local file = file:with {consumer = 'fzy'}
-
-  -- Adds a mapping to search buffers
-  snap.map('n', '<Leader>b', file {producer = 'vim.buffer'})"
+  "Returns a new default with config pre-applied."
   (fn [config] (fnc (tbl.merge defaults config))))
 
 (fn file-producer-by-kind [config kind]
@@ -116,7 +108,6 @@
 
   Supported consumers:
 
-  - fzf
   - fzy
 
   Additional options:
@@ -133,11 +124,8 @@
 
   Examples:
 
-  -- Runs ripgrep.file producer with fzf
+  -- Runs ripgrep.file producer with fzy
   file {producer = 'ripgrep.file'}
-
-  -- Runs with fzy consumer
-  file {producer = 'ripgrep.file', consumer = 'fzy'}
 
   -- Runs with vim.oldfile producer
   file {producer = 'vim.oldfile'}
@@ -198,7 +186,7 @@
       config.consumer
       (pcall require :fzy)
       :fzy
-      :fzf))
+      (assert false "install luarock, then sudo luarocks --lua-version 5.1 install fzy")))
 
   ;; Get the initial producer module based on kind
   (local producer (if
@@ -213,7 +201,6 @@
 
   ;; Get the consumer module based on kind
   (local consumer (match consumer-kind
-    :fzf (snap.get :consumer.fzf)
     :fzy (snap.get :consumer.fzy)
     (where c (= (type c) :function)) c
     _ (assert false "file.consumer is invalid")))
@@ -281,7 +268,7 @@
 
   Examples:
 
-  -- Runs with basic defaults, fzf and ripgrep.file
+  -- Runs with basic defaults, fzy and ripgrep.file
   vimgrep {}
 
   -- Customizes prompt

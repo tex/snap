@@ -200,7 +200,7 @@ local function _15_(self_1_auto, ...)
     elseif pcall(require, "fzy") then
       consumer_kind = "fzy"
     else
-      consumer_kind = "fzf"
+      consumer_kind = assert(false, "install luarock, then sudo luarocks --lua-version 5.1 install fzy")
     end
     local producer
     if config.try then
@@ -213,9 +213,7 @@ local function _15_(self_1_auto, ...)
     local consumer
     do
       local _31_ = consumer_kind
-      if (_31_ == "fzf") then
-        consumer = snap.get("consumer.fzf")
-      elseif (_31_ == "fzy") then
+      if (_31_ == "fzy") then
         consumer = snap.get("consumer.fzy")
       else
         local function _32_()
