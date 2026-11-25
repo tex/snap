@@ -4,8 +4,11 @@
 
 (fn [request]
   (local cwd (snap.sync vim.fn.getcwd))
-  (local (contents error) (snap.async (partial io.system :git [:diff-tree :-p request.selection.hash] cwd)))
-
+  (local (contents error) (snap.async (partial io.system :git [:diff-tree :-p request.selection.hash :--] cwd)))
+  (if (not= error nil) (do (snap.sync (fn []
+                                       (vim.notify (.. "cwd: " cwd))
+                                       (vim.notify (.. "error: " (vim.inspect error)))
+                                       (vim.notify ":snap:preview:git:log error, see :messages" vim.log.levels.ERROR)))))
   (snap.sync (fn []
     (when
       (not (request.canceled))

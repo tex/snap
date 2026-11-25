@@ -18,7 +18,7 @@ local function split(str, sep)
     do
       local trimmed = vim.trim(line)
       if (trimmed ~= "") then
-        val_19_auto = trimmed
+        val_19_auto = line
       else
         val_19_auto = nil
       end
