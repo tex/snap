@@ -3,7 +3,7 @@ local snap = require("snap")
 local string = require("snap.common.string")
 local io = require("snap.common.io")
 local function _1_(request)
-  local cwd = snap.sync(vim.fn.getcwd)
+  local cwd = snap.getcwd()
   local contents, error = nil, nil
   local function _3_()
     local _2_ = {"diff-tree", "-p", request.selection.hash, "--"}

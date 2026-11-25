@@ -3,7 +3,7 @@
 (local io (require :snap.common.io))
 
 (fn [request]
-  (local cwd (snap.sync vim.fn.getcwd))
+  (local cwd (snap.getcwd))
   (local (contents error) (snap.async (partial io.system :git [:diff-tree :-p request.selection.hash :--] cwd)))
   (if (not= error nil) (do (snap.sync (fn []
                                        (vim.notify (.. "cwd: " cwd))

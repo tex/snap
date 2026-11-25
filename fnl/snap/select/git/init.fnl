@@ -29,7 +29,7 @@
   (vim.notify (string.format "Checking out '%s'" (tostring selection)))
   (vim.system
     [:git :checkout (or selection.hash (tostring selection))]
-    {:cwd (vim.fn.getcwd)}
+    {:cwd (snap.getcwd)}
     #(case $1.code
        0 (do
            (vim.notify
@@ -43,7 +43,7 @@
 (fn reset-soft [selection]
   (vim.system
     [:git :reset :--soft (tostring selection)]
-    {:cwd (vim.fn.getcwd)}
+    {:cwd (snap.getcwd)}
     #(when
        (= $1.code 0)
        (vim.notify
@@ -53,7 +53,7 @@
 (fn reset-hard [selection]
   (vim.system
     [:git :reset :--hard (tostring selection)]
-    {:cwd (vim.fn.getcwd)}
+    {:cwd (snap.getcwd)}
     #(when
        (= $1.code 0)
        (vim.notify
@@ -63,7 +63,7 @@
 (fn pull [branch remote]
   (checkout branch 0 0 #(vim.system
     [:git :pull (tostring remote) (tostring branch)]
-    {:cwd (vim.fn.getcwd)}
+    {:cwd (snap.getcwd)}
     #(when
        (= $1.code 0)
        (vim.notify
@@ -73,7 +73,7 @@
 (fn pull-list [branch]
   (vim.system
     [:git :remote]
-    {:cwd (vim.fn.getcwd)}
+    {:cwd (snap.getcwd)}
     #(when
        (= $1.code 0)
        (local remotes (snap-string.split $1.stdout))
@@ -85,7 +85,7 @@
 (fn select [selection winnr type]
   (vim.system
     [:git :diff-tree :-p selection.hash]
-    {:cwd (vim.fn.getcwd)}
+    {:cwd (snap.getcwd)}
     #(when
        (= $1.code 0)
        (local lines (snap-string.split $1.stdout))

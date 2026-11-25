@@ -122,10 +122,10 @@ end
 _2amodule_2a["getcwd"] = getcwd
 local function setcwd(cwd)
   local cwd0
-  if (cwd == "") then
+  if ((cwd == "") or (cwd == nil)) then
     cwd0 = nil
   else
-    cwd0 = cwd
+    cwd0 = vim.fs.normalize(cwd)
   end
   vim.g.snap_cwd = cwd0
   return nil

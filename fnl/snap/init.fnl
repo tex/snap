@@ -86,7 +86,7 @@
   vim.g.snap_cwd)
 
 (defn setcwd [cwd]
-  (let [cwd (if (= cwd "") nil cwd)]
+  (let [cwd (if (or (= cwd "") (= cwd nil)) nil (vim.fs.normalize cwd))]
     (set vim.g.snap_cwd cwd)))
 
 (defn topath [selection]

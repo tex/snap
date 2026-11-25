@@ -32,7 +32,7 @@ local function checkout(selection, winnr, type, on_done)
       return nil
     end
   end
-  return vim.system({"git", "checkout", (selection.hash or tostring(selection))}, {cwd = vim.fn.getcwd()}, _1_)
+  return vim.system({"git", "checkout", (selection.hash or tostring(selection))}, {cwd = snap.getcwd()}, _1_)
 end
 local function reset_soft(selection)
   local function _5_(_241)
@@ -42,7 +42,7 @@ local function reset_soft(selection)
       return nil
     end
   end
-  return vim.system({"git", "reset", "--soft", tostring(selection)}, {cwd = vim.fn.getcwd()}, _5_)
+  return vim.system({"git", "reset", "--soft", tostring(selection)}, {cwd = snap.getcwd()}, _5_)
 end
 local function reset_hard(selection)
   local function _7_(_241)
@@ -52,7 +52,7 @@ local function reset_hard(selection)
       return nil
     end
   end
-  return vim.system({"git", "reset", "--hard", tostring(selection)}, {cwd = vim.fn.getcwd()}, _7_)
+  return vim.system({"git", "reset", "--hard", tostring(selection)}, {cwd = snap.getcwd()}, _7_)
 end
 local function pull(branch, remote)
   local function _9_()
@@ -63,7 +63,7 @@ local function pull(branch, remote)
         return nil
       end
     end
-    return vim.system({"git", "pull", tostring(remote), tostring(branch)}, {cwd = vim.fn.getcwd()}, _10_)
+    return vim.system({"git", "pull", tostring(remote), tostring(branch)}, {cwd = snap.getcwd()}, _10_)
   end
   return checkout(branch, 0, 0, _9_)
 end
@@ -88,7 +88,7 @@ local function pull_list(branch)
       return nil
     end
   end
-  return vim.system({"git", "remote"}, {cwd = vim.fn.getcwd()}, _12_)
+  return vim.system({"git", "remote"}, {cwd = snap.getcwd()}, _12_)
 end
 local function select(selection, winnr, type)
   local function _18_(_241)
@@ -103,7 +103,7 @@ local function select(selection, winnr, type)
       return nil
     end
   end
-  return vim.system({"git", "diff-tree", "-p", selection.hash}, {cwd = vim.fn.getcwd()}, _18_)
+  return vim.system({"git", "diff-tree", "-p", selection.hash}, {cwd = snap.getcwd()}, _18_)
 end
 local branch_actions
 local function _21_(_241)
